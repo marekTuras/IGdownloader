@@ -1,0 +1,21 @@
+FROM python:3.12-slim
+
+# ffmpeg na extrakciu prvého snímku
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ffmpeg \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY app.py .
+
+ENV DATA_DIR=/data
+RUN mkdir -p /data
+
+EXPOSE 8000
+
+# Render/Railway/Fly nastavujú $PORT; default 8000
+CMD ["sh", "-c", "uvicorn app:app --host 0.0.0.0 --port ${PORT:-8000}"]

@@ -32,7 +32,15 @@ Skript ich v prípade potreby doinštaluje automaticky (`pip3` / `apt-get`).
 
 Chrome na iOS nepodporuje rozšírenia, preto je na mobile najpraktickejšia
 **Apple Skratka (Shortcut)**, ktorá cez Share menu stiahne video aj prvý frame
-do Fotiek. Návod na zostavenie: [`mobile/ios-shortcut/NAVOD.md`](mobile/ios-shortcut/NAVOD.md).
+do Fotiek. Návod: [`mobile/ios-shortcut/NAVOD.md`](mobile/ios-shortcut/NAVOD.md).
+
+Aby aj na mobile vznikal **skutočný prvý snímok videa (frame 0)** — nie cover —
+Skratka volá malý **backend** ([`server/`](server/)), ktorý robí extrakciu cez
+`ffmpeg`. Server si nasadíš kdekoľvek s otvoreným internetom (Render/Railway/Fly/VPS).
+
+```
+iPhone Share → Skratka → server (yt-dlp + ffmpeg) → video + frame 0 → Fotky
+```
 
 ## Poznámka k sieti
 
