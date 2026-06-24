@@ -28,6 +28,12 @@ Výstup:
 
 Skript ich v prípade potreby doinštaluje automaticky (`pip3` / `apt-get`).
 
+## 📱 iPhone / iOS
+
+Chrome na iOS nepodporuje rozšírenia, preto je na mobile najpraktickejšia
+**Apple Skratka (Shortcut)**, ktorá cez Share menu stiahne video aj prvý frame
+do Fotiek. Návod na zostavenie: [`mobile/ios-shortcut/NAVOD.md`](mobile/ios-shortcut/NAVOD.md).
+
 ## Poznámka k sieti
 
 Sťahovanie vyžaduje prístup k doménam `instagram.com` / `tiktok.com`.
