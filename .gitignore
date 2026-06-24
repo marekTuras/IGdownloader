@@ -1,3 +1,7 @@
 # Stiahnuté videá a vygenerované frames
 downloads/
 *.first.png
+
+# Python
+__pycache__/
+*.pyc
