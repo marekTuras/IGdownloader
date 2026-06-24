@@ -1,105 +1,116 @@
-# 📱 iOS Skratka — Stiahni IG/TikTok video + prvý frame
+# 📱 iPhone: Stiahni IG/TikTok video + SKUTOČNÝ prvý frame — bez servera
 
-Skratka sa zobrazí v **Share menu** (Zdieľať) priamo v IG/TikTok appke. Po
-ťuknutí stiahne **video** aj **prvý frame** do appky **Fotky**.
+Riešenie, ktoré beží **celé na iPhone** (žiadny server, žiadny Mac) a vytvorí
+**reálny prvý snímok videa — frame 0**, nie cover.
 
-> **Prečo nie Chrome extension?** Chrome na iOS nepodporuje rozšírenia
-> (povoľuje ich len Safari, cez Xcode + Mac). Skratka je na iPhone
-> najpraktickejšia a funguje vo všetkých appkách cez tlačidlo Zdieľať.
+Funguje to vďaka appke **a-Shell** (zadarmo v App Store), ktorá vie na telefóne
+spustiť `yt-dlp` (stiahnutie) aj `ffmpeg` (frame 0) a integruje sa so Skratkami.
 
----
+```
+IG/TikTok → Zdieľať → Skratka → a-Shell (yt-dlp + ffmpeg) → video + frame 0 → Fotky
+```
 
-## Dve verzie — vyber si
-
-| | **A) So serverom** *(odporúčané)* | **B) Bez servera** |
-|---|---|---|
-| **Prvý frame** | ✅ **skutočný frame 0** (`ffmpeg` na serveri) | ⚠️ cover (úvodný obrázok platformy, nie nutne frame 0) |
-| **Čo treba** | nasadiť backend z [`../../server`](../../server) | nič navyše |
-| **Spoľahlivosť** | vyššia (IG aj TikTok rieši server) | TikTok ok, IG len verejné |
-
-Keďže chceš **skutočný prvý snímok videa**, choď na **verziu A**.
+> **Prečo a-Shell a nie čistá Skratka?** iOS Skratky nevedia dekódovať snímok
+> z videa — nemajú žiadnu „extract frame" akciu. Skutočný frame 0 vie spraviť
+> jedine `ffmpeg`, a a-Shell ho prináša priamo na iPhone (bez servera).
+> *(Chrome extension na iOS neexistuje — rozšírenia povoľuje len Safari.)*
 
 ---
 
-## A) Verzia so serverom — skutočný prvý frame ✅
+## 1) Jednorazová príprava (v appke a-Shell)
 
-### Predpoklad
-Nasadený backend (viď [`../../server/README.md`](../../server/README.md)) s verejnou
-HTTPS URL, napr. `https://moj-server.app`, a tokenom `API_TOKEN`.
-Over: `curl https://moj-server.app/health` → `{"status":"ok", ...}`.
+1. Nainštaluj **a-Shell** z App Store (zadarmo).
+2. Otvor a-Shell a spusti tieto dva príkazy (každý zvlášť, počkaj na dokončenie):
 
-### Akcie skratky
-Appka **Skratky** → **+** → **Pridať akciu**. Pridaj v poradí:
+   ```sh
+   pip install yt-dlp
+   pkg install ffmpeg
+   ```
 
-1. **Detaily skratky** (ⓘ) → zapni **Zobraziť v zozname zdieľania**;
-   typy vstupu: **URL** a **Text**.
+   - `yt-dlp` je čistý Python → v a-Shell sa nainštaluje cez `pip`.
+   - `ffmpeg` je WebAssembly balík → nainštaluje sa cez `pkg install`.
 
-2. **„Získať text zo vstupu"** (Get Text from Input) → **Vstup skratky**.
-   *(toto je odkaz na video)*
+3. Over, že to funguje (skús ľubovoľné verejné video):
 
-3. **„Získať obsah URL"** (Get Contents of URL):
-   - URL: `https://moj-server.app/process`
-   - **Metóda:** `POST`
-   - **Hlavičky:** `X-API-Token` = `tvoj-token`  (ak si token nastavil)
-   - **Telo požiadavky:** `JSON`
-     - kľúč `url` (typ Text) = premenná **Text zo vstupu** z kroku 2
-   - *(server vráti slovník s `video_url` a `frame_url`)*
+   ```sh
+   cd ~/Documents
+   yt-dlp -f mp4/best -o out.mp4 "https://www.tiktok.com/@user/video/123..."
+   ffmpeg -y -i out.mp4 -frames:v 1 out.png
+   ls -la out.mp4 out.png
+   ```
 
-4. **VIDEO:** **„Získať hodnotu zo slovníka"** (Get Dictionary Value),
-   kľúč `video_url`, vstup = výsledok z kroku 3.
-   → **„Získať obsah URL"** s tým URL
-   → **„Uložiť do fotoalbumu"** (Save to Photo Album).
-
-5. **PRVÝ FRAME:** **„Získať hodnotu zo slovníka"**, kľúč `frame_url`,
-   vstup = výsledok z kroku 3.
-   → **„Získať obsah URL"** s tým URL
-   → **„Uložiť do fotoalbumu"**.
-
-6. **„Zobraziť notifikáciu"**: `Hotovo ✅ Video a prvý frame sú vo Fotkách.`
-
-Pomenuj **„Stiahni IG/TikTok"** a ulož. Server vracia presný **frame 0**, takže
-to, čo sa uloží, je naozaj prvý snímok videa.
+   Ak vznikli `out.mp4` aj `out.png`, hotovo. `-frames:v 1` zapíše **prvý
+   dekódovaný snímok = frame 0** (overené, je identický s `select=eq(n\,0)`).
 
 ---
 
-## B) Verzia bez servera — jednoduchšia (cover, nie frame 0)
+## 2) Skratka (Shortcut) — Share menu jedným ťuknutím
 
-Bez backendu iOS nevie dekódovať snímok z videa, takže ako „prvý frame" sa uloží
-**cover** (úvodný obrázok, ktorý vráti platforma). Použi, ak nechceš nasadzovať
-server a cover ti stačí.
+Appka **Skratky** → **+** (nová). Pridaj akcie v tomto poradí:
 
-1. **Detaily skratky** → **Zobraziť v zozname zdieľania**; vstup URL + Text.
-2. **„Získať text zo vstupu"** → Vstup skratky.
-3. **„Ak"** (If): *Text zo vstupu* **obsahuje** `tiktok`
+### a) Vstup zo Share menu
+- **Detaily skratky** (ⓘ) → zapni **Zobraziť v zozname zdieľania**.
+- Typy vstupu: **URL** a **Text**.
 
-   **TikTok (vnútri „Ak"):**
-   - **„Získať obsah URL"**: `https://www.tikwm.com/api/?hd=1&url=[Text zo vstupu]`
-   - **„Získať hodnotu zo slovníka"** `data.play` → **„Získať obsah URL"** → **„Uložiť do fotoalbumu"** *(video)*
-   - **„Získať hodnotu zo slovníka"** `data.origin_cover` → **„Získať obsah URL"** → **„Uložiť do fotoalbumu"** *(cover)*
+### b) Získaj odkaz
+- **„Získať text zo vstupu"** (Get Text from Input) → **Vstup skratky**.
+  *(toto je odkaz na video)*
 
-   **Inak (Instagram):**
-   - **„Získať obsah URL"** = *Text zo vstupu*
-   - **„Nájsť zhodu v texte"** (regex, case-insensitive): `property="og:video" content="([^"]+)"` → **„Získať skupinu"** 1 → **„Nahradiť text"** `&amp;`→`&` → **„Získať obsah URL"** → **„Uložiť do fotoalbumu"** *(video)*
-   - to isté s `property="og:image" content="([^"]+)"` → *(cover)*
-4. **„Zobraziť notifikáciu"**: `Hotovo ✅`
+### c) Spusti a-Shell (download + frame 0)
+- Akcia **„Execute Command"** (z appky **a-Shell** — hľadaj „a-Shell" vo vyhľadávaní akcií).
+- Režim: **In App** (nie In Extension — ffmpeg/yt-dlp potrebujú plný režim).
+- Do poľa s príkazmi vlož (premennú **Text zo vstupu** vlož na miesto `URL`):
+
+  ```sh
+  cd ~/Documents
+  rm -f out.mp4 out.png
+  yt-dlp --no-playlist --no-warnings -f mp4/best -o out.mp4 "URL"
+  ffmpeg -y -i out.mp4 -frames:v 1 out.png
+  open shortcuts://
+  ```
+
+  - `"URL"` nahraď premennou *Text zo vstupu* (necháš úvodzovky okolo nej).
+  - Posledný riadok `open shortcuts://` vráti riadenie späť do Skratky.
+
+### d) Vyzdvihni video a ulož do Fotiek
+- Akcia **„Get File"** (a-Shell): cesta súboru `~/Documents/out.mp4`.
+- **„Uložiť do fotoalbumu"** (Save to Photo Album) → vstup = výsledok Get File.
+
+### e) Vyzdvihni prvý frame a ulož do Fotiek
+- Akcia **„Get File"** (a-Shell): cesta `~/Documents/out.png`.
+- **„Uložiť do fotoalbumu"** → vstup = výsledok Get File.
+
+### f) Notifikácia
+- **„Zobraziť notifikáciu"**: `Hotovo ✅ Video a prvý frame (frame 0) sú vo Fotkách.`
+
+Skratku pomenuj **„Stiahni IG/TikTok"** a ulož.
 
 ---
 
-## Použitie
+## 3) Použitie
 
-V IG/TikTok appke otvor video → **Zdieľať** → **„Stiahni IG/TikTok"**.
-Video aj prvý frame sa uložia do **Fotiek**, na konci príde notifikácia.
+V IG alebo TikTok appke otvor video → **Zdieľať** → **„Stiahni IG/TikTok"**.
+Skratka prepne do a-Shell (stiahne + spraví frame 0), vráti sa a do **Fotiek**
+uloží **video** aj **skutočný prvý snímok**.
+
+---
 
 ## Riešenie problémov
 
-- **Verzia A — chyba 401**: zlý/`chýbajúci` `X-API-Token`, skontroluj hlavičku.
-- **Verzia A — chyba 502**: server nestiahol video (súkromné IG / rate limit) —
-  skús iný príspevok alebo o chvíľu znova; pozri logy servera.
-- **Instagram nestiahne**: príspevok je súkromný/login-only. TikTok ide spoľahlivo.
-- **Skratka chýba v Share menu**: *Detaily skratky → Zobraziť v zozname zdieľania*
-  + typy vstupu URL a Text.
+- **`yt-dlp: command not found`** → spusti `pip install yt-dlp` v a-Shell.
+- **`ffmpeg: command not found`** → spusti `pkg install ffmpeg` v a-Shell.
+- **Instagram nestiahne** → príspevok je súkromný/login-only. Skús verejný; TikTok ide spoľahlivo.
+- **Pomalé** → ffmpeg v a-Shell je WebAssembly; pri dlhších videách to chvíľu trvá. Pre krátke reels/clips je to v pohode.
+- **Skratka chýba v Share menu** → *Detaily skratky → Zobraziť v zozname zdieľania* + typy vstupu URL a Text.
+- **Skratka sa nevráti z a-Shell** → over, že posledný príkaz je `open shortcuts://`.
 
-## Súvisiace
+## Pomocný skript
 
-- Backend: [`../../server/`](../../server/) — daj mu odkaz, vráti video + **frame 0**.
-- Desktop skill s presným frame 0: `.claude/skills/ig-tiktok-firstframe/`.
+Rovnaká logika je aj ako súbor [`../ashell/ig`](../ashell/ig) — môžeš si ho v a-Shell
+uložiť do `~/Documents` a v Skratke volať `sh ~/Documents/ig "URL"` namiesto
+vkladania príkazov ručne.
+
+## Desktop verzia
+
+Na počítači použi skill `ig-tiktok-firstframe` (`.claude/skills/...`) — `yt-dlp`
++ `ffmpeg` s presným frame 0.

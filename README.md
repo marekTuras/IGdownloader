@@ -28,19 +28,22 @@ Výstup:
 
 Skript ich v prípade potreby doinštaluje automaticky (`pip3` / `apt-get`).
 
-## 📱 iPhone / iOS
+## 📱 iPhone / iOS — bez servera, skutočný frame 0
 
-Chrome na iOS nepodporuje rozšírenia, preto je na mobile najpraktickejšia
-**Apple Skratka (Shortcut)**, ktorá cez Share menu stiahne video aj prvý frame
-do Fotiek. Návod: [`mobile/ios-shortcut/NAVOD.md`](mobile/ios-shortcut/NAVOD.md).
-
-Aby aj na mobile vznikal **skutočný prvý snímok videa (frame 0)** — nie cover —
-Skratka volá malý **backend** ([`server/`](server/)), ktorý robí extrakciu cez
-`ffmpeg`. Server si nasadíš kdekoľvek s otvoreným internetom (Render/Railway/Fly/VPS).
+Na iPhone funguje všetko **lokálne** (žiadny server, žiadny Mac) cez appku
+**a-Shell** (zadarmo), ktorá vie na telefóne spustiť `yt-dlp` + `ffmpeg`.
+Skratka v Share menu spustí a-Shell a uloží video aj **reálny prvý snímok
+videa (frame 0)** do Fotiek.
 
 ```
-iPhone Share → Skratka → server (yt-dlp + ffmpeg) → video + frame 0 → Fotky
+IG/TikTok → Zdieľať → Skratka → a-Shell (yt-dlp + ffmpeg) → video + frame 0 → Fotky
 ```
+
+Návod krok za krokom: [`mobile/ios-shortcut/NAVOD.md`](mobile/ios-shortcut/NAVOD.md).
+On-device skript: [`mobile/ashell/ig`](mobile/ashell/ig).
+
+> Chrome na iOS nepodporuje rozšírenia (povoľuje ich len Safari). iOS Skratky
+> samé nevedia dekódovať snímok z videa, preto frame 0 robí `ffmpeg` v a-Shell.
 
 ## Poznámka k sieti
 

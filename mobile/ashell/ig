@@ -1,0 +1,45 @@
+#!/bin/sh
+# ig — stiahne IG/TikTok video a vyextrahuje SKUTOČNÝ prvý snímok (frame 0).
+# Beží priamo na iPhone v appke a-Shell (yt-dlp + ffmpeg). Bez servera.
+#
+# Použitie (v a-Shell alebo cez Skratku):
+#   ig "https://www.instagram.com/reel/Cxxxxxxxxxx/"
+#
+# Výstup do ~/Documents:
+#   out.mp4   — video
+#   out.png   — prvý snímok videa (frame 0)
+#
+# Skratka si potom oba súbory vyzdvihne cez a-Shell intent "Get File"
+# a uloží do Fotiek.
+
+URL="$1"
+
+if [ -z "$URL" ]; then
+  echo "CHYBA: chyba URL. Pouzitie: ig \"<odkaz na IG/TikTok video>\"" >&2
+  exit 2
+fi
+
+cd "$HOME/Documents" || exit 1
+
+# Vyčistíme staré výstupy, nech Skratka vyzdvihne vždy ten správny súbor.
+rm -f out.mp4 out.png
+
+echo ">> Stahujem video..."
+yt-dlp \
+  --no-playlist \
+  --no-warnings \
+  -f "mp4/best" \
+  -o "out.mp4" \
+  "$URL" || { echo "CHYBA: stiahnutie zlyhalo." >&2; exit 1; }
+
+if [ ! -f out.mp4 ]; then
+  echo "CHYBA: video out.mp4 sa nevytvorilo." >&2
+  exit 1
+fi
+
+echo ">> Generujem prvy frame (frame 0)..."
+# -frames:v 1 zapíše prvý dekódovaný snímok = frame 0 (bez filtra, robustné pre ffmpeg.wasm).
+ffmpeg -y -loglevel error -i out.mp4 -frames:v 1 out.png \
+  || { echo "CHYBA: extrakcia prveho framu zlyhala." >&2; exit 1; }
+
+echo ">> Hotovo: ~/Documents/out.mp4 + ~/Documents/out.png"
