@@ -18,11 +18,11 @@ kadernictvo). Pre neznáme kľúčové slovo sa vyrobí **generický** vertical 
 nástroj beží pre čokoľvek, len s presnejšími výsledkami pre nakonfigurované
 odvetvia (nový preset = pár riadkov do JSON).
 
-Toto je **1. blok** väčšieho systému:
+Bloky väčšieho systému:
 
 1. **Prospecting + overovanie** ← *tento nástroj* (zber firiem → verifikácia webu → CSV)
-2. Approval workflow (ty schváliš / zamietneš kandidátov)
-3. Generátor demo stránky (moderný one-page web na oslovenie)
+2. **Approval workflow** ← *hotové* (v CSV vyplníš `approved=yes/no` → fronta schválených)
+3. Generátor demo stránky (moderný one-page web na oslovenie) — spustí sa až na pokyn
 
 ## Ako to funguje
 
@@ -104,6 +104,32 @@ V izolovaných prostrediach (napr. egress policy) sú tieto hosty blokované —
 vtedy použi `--offline` (pracuje nad seed dátami), a plný beh spusti v prostredí
 s prístupom na net. `100%` istotu „firma nemá web" nakoniec potvrdí človek
 (FB „O firme" / WHOIS) — nástroj dodá zoradený zoznam s odôvodnenou istotou.
+
+## Approval workflow (blok 2)
+
+Do vygenerovaného CSV pribudol **prvý stĺpec `approved`** (prázdny). Postup:
+
+```bash
+# 1) vygeneruj leady
+python -m prospector.cli --keyword "servis počítačov" --source seed --offline --out out/pc.csv
+
+# 2) v out/pc.csv vyplň stĺpec 'approved' = yes / no (prázdne = nerozhodnuté)
+#    yes/áno/1/ok = schválené,  no/nie/0 = zamietnuté
+
+# 3) sprav frontu schválených
+python -m prospector.approve --in out/pc.csv --out out/approved.csv --queue out/queue.json
+```
+
+Approve krok:
+
+- rozdelí firmy na **schválené / zamietnuté / čakajúce** a vypíše počty,
+- zapíše iba schválené firmy do `--out` CSV,
+- zapíše **generation queue** (`--queue` JSON) — vstup pre blok 3,
+- pri každej schválenej rozlíši **„nový web"** (`status=none`, firma web nemá)
+  vs. **„redesign"** (`status=outdated`, starý web).
+
+> ⚠ Tento krok **negeneruje** žiadny web. Len pripraví zoznam schválených firiem.
+> Tvorba webu (blok 3) je samostatná a spustí sa **až na výslovný pokyn**.
 
 ## Testy
 
