@@ -21,16 +21,17 @@ from .base import Source
 
 BASE = "https://www.atlasfiriem.info"
 # Predvolená kategória: elektroservisy -> počítače a príslušenstvo.
+# Pre iné odvetvia sa cesta berie z vertical.catalog_path.
 CATEGORY_PATH = "katalog/elektro-a-pocitace/elektroservisy/pocitace-a-prislusenstvo"
 
 
 def listing_url(okres_slug: str, okres_id: int, strana: int = 1,
-                base: str = BASE) -> str:
+                base: str = BASE, category_path: str = CATEGORY_PATH) -> str:
     """Zostaví URL výpisu firiem pre okres.
 
     Príklad: okres-150-michalovce-strana-1.html
     """
-    return f"{base}/{CATEGORY_PATH}/okres-{okres_id}-{okres_slug}-strana-{strana}.html"
+    return f"{base}/{category_path}/okres-{okres_id}-{okres_slug}-strana-{strana}.html"
 
 
 def parse_listing(html: str, base: str = BASE) -> list[Company]:
@@ -63,7 +64,7 @@ def parse_listing(html: str, base: str = BASE) -> list[Company]:
             city=city,
             phone=phone,
             website=website if website and is_own_website(website) else None,
-            category="pc-servis",
+            category="",  # doplní pipeline z vertical konfigurácie
             source="atlasfiriem",
             source_url=base,
         ))
@@ -95,10 +96,12 @@ class AtlasFiriemSource(Source):
     name = "atlasfiriem"
 
     def fetch(self, *, okres_slug: str = "michalovce", okres_id: int = 150,
-              strany: int = 1, **kwargs) -> Iterable[Company]:
+              strany: int = 1, category_path: str = CATEGORY_PATH,
+              **kwargs) -> Iterable[Company]:
         from ..discovery import fetch as http_fetch
         for strana in range(1, strany + 1):
-            url = listing_url(okres_slug, okres_id, strana)
+            url = listing_url(okres_slug, okres_id, strana,
+                              category_path=category_path)
             html = http_fetch(url)
             if not html:
                 # zdroj nedostupný (egress policy / chyba) — preskoč ticho

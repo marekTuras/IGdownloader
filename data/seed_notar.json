@@ -1,0 +1,54 @@
+[
+  {
+    "name": "Notársky úrad JUDr. Mária Pauliaková",
+    "city": "Bratislava",
+    "district": "Bratislava V",
+    "region": "Bratislavský",
+    "category": "notar",
+    "phone": "02 4333 5555",
+    "email": "",
+    "website": "https://notarpauliakova.sk/",
+    "source": "seed",
+    "source_url": "https://notarpauliakova.sk/",
+    "notes": "Má vlastný web — online sa klasifikuje modern/outdated."
+  },
+  {
+    "name": "Notársky úrad JUDr. Denisa Adamkovičová",
+    "city": "Trenčín",
+    "district": "Trenčín",
+    "region": "Trenčiansky",
+    "category": "notar",
+    "phone": "032 65 820 72",
+    "email": "",
+    "website": "https://www.notartrencin.sk/",
+    "source": "seed",
+    "source_url": "https://www.notartrencin.sk/",
+    "notes": "Má vlastný web."
+  },
+  {
+    "name": "Notársky úrad JUDr. Ľubica Floriánová",
+    "city": "Bratislava",
+    "district": "Bratislava I",
+    "region": "Bratislavský",
+    "category": "notar",
+    "phone": "0905 433 314",
+    "email": "lubica.florianova@notar.sk",
+    "website": "https://www.notarka.sk/",
+    "source": "seed",
+    "source_url": "https://www.notarka.sk/",
+    "notes": "Má vlastný web (notarka.sk), mail je komorový @notar.sk."
+  },
+  {
+    "name": "Notársky úrad JUDr. Šikutová Daniela",
+    "city": "Bratislava",
+    "district": "Bratislava I",
+    "region": "Bratislavský",
+    "category": "notar",
+    "phone": "02 54630634",
+    "email": "",
+    "website": null,
+    "source": "seed",
+    "source_url": "https://www.tvojnotar.sk/85/sikutova-daniela-judr",
+    "notes": "Nájdená len v katalógu tvojnotar.sk, vlastná doména nenájdená — kandidát (over ručne)."
+  }
+]

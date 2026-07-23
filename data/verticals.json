@@ -1,0 +1,54 @@
+{
+  "pc-servis": {
+    "keyword": "servis počítačov",
+    "label": "pc-servis",
+    "aliases": ["pc servis", "pc-servis", "servis pc", "oprava počítačov"],
+    "domain_stopwords": [
+      "servis", "pc", "pocitacov", "pocitace", "notebookov", "notebook",
+      "oprava", "opravy", "predaj", "it", "mobil", "mobilov", "smartfonov",
+      "tabletov", "sluzby"
+    ],
+    "catalog_path": "katalog/elektro-a-pocitace/elektroservisy/pocitace-a-prislusenstvo",
+    "search_queries": [
+      "{kw} {loc} facebook",
+      "{kw} {loc} kontakt",
+      "oprava notebookov {loc} živnostník"
+    ]
+  },
+  "notar": {
+    "keyword": "notár",
+    "label": "notar",
+    "aliases": ["notar", "notári", "notarsky urad", "notársky úrad"],
+    "domain_stopwords": [
+      "notar", "notarsky", "urad", "kancelaria", "judr", "mgr", "ing", "jud"
+    ],
+    "catalog_path": "katalog/sluzby/pravne-a-obchodne-sluzby/notari",
+    "search_queries": [
+      "notár {loc} notársky úrad",
+      "notár {loc} kontakt",
+      "JUDr notár {loc}"
+    ]
+  },
+  "autoservis": {
+    "keyword": "autoservis",
+    "label": "autoservis",
+    "aliases": ["auto servis", "oprava aut", "pneuservis"],
+    "domain_stopwords": ["auto", "autoservis", "servis", "oprava", "pneuservis", "moto"],
+    "catalog_path": "katalog/auto-moto/autoservisy",
+    "search_queries": [
+      "autoservis {loc} facebook",
+      "autoservis {loc} kontakt"
+    ]
+  },
+  "kadernictvo": {
+    "keyword": "kaderníctvo",
+    "label": "kadernictvo",
+    "aliases": ["kadernictvo", "kaderník", "barber", "holičstvo"],
+    "domain_stopwords": ["kadernictvo", "kadernik", "salon", "studio", "barber", "beauty"],
+    "catalog_path": "katalog/sluzby/kadernictva-a-holicstva",
+    "search_queries": [
+      "kaderníctvo {loc} facebook",
+      "kaderníctvo {loc} instagram"
+    ]
+  }
+}

@@ -13,7 +13,9 @@ NON_OWN_HOST_PATTERNS = [
     "facebook.com", "fb.com", "instagram.com", "linktr.ee", "linktree",
     "azet.sk", "zlatestranky.sk", "zoznam.sk", "cylex.sk", "atlasfiriem",
     "info-", "virtualne.sk", "123dopyt", "edb.eu", "near-place", "findglocal",
-    "bazos.sk", "bazar.sk", "poi.oma.sk", "skmapy.sk", "google.com/maps",
+    "bazos.sk", "bazar.sk", "oma.sk", "skmapy.sk", "google.com/maps",
+    # odvetvové/komorové katalógy (napr. notári)
+    "tvojnotar", "notar.sk/", "firmy.zoznam", "orsr.sk", "finstat.sk",
     # freehostingy / stavače stránok = často "polovičný" web, nie vlastná prezentácia
     "blogspot.", "webnode.", "estranky.", "wordpress.com", "wixsite.com",
     "sites.google.com", "webs.com", "webmium",

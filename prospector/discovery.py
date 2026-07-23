@@ -25,11 +25,8 @@ except Exception:  # pragma: no cover
     requests = None  # type: ignore
 
 USER_AGENT = "Mozilla/5.0 (compatible; ProspectorBot/1.0)"
-STOPWORDS = {
-    "servis", "pc", "pocitacov", "pocitace", "notebookov", "notebook",
-    "oprava", "opravy", "predaj", "a", "servispc", "sluzby", "it", "mobil",
-    "mobilov", "smartfonov", "tabletov",
-}
+# Generický default; presné stopwords dodáva odvetvová (vertical) konfigurácia.
+DEFAULT_STOPWORDS = {"a", "s", "pre", "na", "sk", "sluzby", "firma"}
 
 
 def slugify(text: str) -> str:
@@ -38,11 +35,16 @@ def slugify(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "", text)
 
 
-def guess_domains(company: Company) -> list[str]:
-    """Vygeneruje pravdepodobné .sk domény z názvu firmy."""
-    raw = re.split(r"[\s–\-|&/,]+", company.name.lower())
+def guess_domains(company: Company, stopwords: set[str] | None = None) -> list[str]:
+    """Vygeneruje pravdepodobné .sk domény z názvu firmy.
+
+    `stopwords` (napr. z vertical konfigurácie) sa vyhodia, nech doména vychádza
+    z rozlišujúcej časti názvu (meno notára, značka servisu…), nie z odvetvia.
+    """
+    stopwords = {slugify(w) for w in (stopwords or DEFAULT_STOPWORDS)}
+    raw = re.split(r"[\s–\-|&/,\.]+", company.name.lower())
     words = [slugify(w) for w in raw if slugify(w)]
-    content = [w for w in words if w not in STOPWORDS] or words
+    content = [w for w in words if w not in stopwords] or words
     joined = "".join(content[:2])
     first = content[0] if content else ""
     cands = {joined, first, joined + "sk", first + "servis", first + "pc"}
@@ -72,8 +74,12 @@ def fetch(url: str, timeout: float = 8.0) -> Optional[str]:
     return None
 
 
-def verify(company: Company, *, online: bool = True) -> Company:
-    """Doplní company.status / confidence / reasons."""
+def verify(company: Company, *, online: bool = True,
+           stopwords: set[str] | None = None) -> Company:
+    """Doplní company.status / confidence / reasons.
+
+    `stopwords` sa odovzdajú do hádania domény (odvetvovo špecifické).
+    """
     # 1) Poznáme vlastný web?
     if company.website and is_own_website(company.website):
         if online:
@@ -103,7 +109,7 @@ def verify(company: Company, *, online: bool = True) -> Company:
     # 3) Skúsim uhádnuť doménu.
     guessed_live = []
     if online:
-        for dom in guess_domains(company):
+        for dom in guess_domains(company, stopwords):
             if dns_resolves(dom):
                 guessed_live.append(dom)
 
