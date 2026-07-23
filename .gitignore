@@ -5,3 +5,7 @@ downloads/
 # Python
 __pycache__/
 *.pyc
+.pytest_cache/
+
+# Prospector výstupy (regenerovateľné cez CLI)
+out/
