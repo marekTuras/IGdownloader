@@ -50,5 +50,49 @@
       "kaderníctvo {loc} facebook",
       "kaderníctvo {loc} instagram"
     ]
+  },
+  "remesla": {
+    "keyword": "strechy klampiarstvo",
+    "label": "remesla",
+    "aliases": ["remesla", "remeslá", "strechy", "klampiarstvo", "stolarstvo",
+                "stolárstvo", "okna", "okná", "kurenie", "kúrenie", "bazeny"],
+    "domain_stopwords": [
+      "strechy", "strecha", "klampiarstvo", "pokryvacstvo", "tesarstvo",
+      "stolarstvo", "stavebna", "stavebne", "prace", "servis", "firma", "sk"
+    ],
+    "catalog_path": "katalog/byvanie-stavebnictvo/stavebne-firmy-a-sluzby/strechy",
+    "search_queries": [
+      "{kw} {loc} kontakt",
+      "{kw} {loc} realizacie",
+      "{kw} {loc} facebook"
+    ]
+  },
+  "restauracia": {
+    "keyword": "reštaurácia",
+    "label": "restauracia",
+    "aliases": ["restauracia", "reštaurácia", "pizzeria", "kaviaren", "bistro"],
+    "domain_stopwords": [
+      "restauracia", "restaurant", "pizzeria", "kaviaren", "bar", "bistro",
+      "jedalen", "gastro", "u", "na"
+    ],
+    "catalog_path": "katalog/gastronomia-ubytovanie/restauracie-a-pohostinstva",
+    "search_queries": [
+      "reštaurácia {loc} menu",
+      "reštaurácia {loc} facebook"
+    ]
+  },
+  "penzion": {
+    "keyword": "penzión",
+    "label": "penzion",
+    "aliases": ["penzion", "penzión", "apartmany", "ubytovanie", "chata"],
+    "domain_stopwords": [
+      "penzion", "apartman", "apartmany", "ubytovanie", "hotel", "chata",
+      "u", "na", "resort"
+    ],
+    "catalog_path": "katalog/gastronomia-ubytovanie/ubytovanie/penziony",
+    "search_queries": [
+      "penzión {loc} ubytovanie",
+      "penzión {loc} rezervácia kontakt"
+    ]
   }
 }
